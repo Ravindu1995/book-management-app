@@ -14,8 +14,7 @@ frontend/node_modules/
 /out/
 
 # Optional: Ignore Docker files
-docker-compose.yml
-Dockerfile
+
 
 # Optional: Ignore OS-specific files
 .DS_Store
