@@ -1,0 +1,26 @@
+# Ignore node_modules in both backend and frontend
+backend/node_modules/
+frontend/node_modules/
+
+# Optional: Ignore environment files
+*.env
+
+# Optional: Ignore log files
+*.log
+
+# Optional: Ignore build output
+/dist/
+/build/
+/out/
+
+# Optional: Ignore Docker files
+docker-compose.yml
+Dockerfile
+
+# Optional: Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Optional: Ignore IDE-specific files
+.vscode/
+.idea/

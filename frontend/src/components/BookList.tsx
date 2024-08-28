@@ -4,6 +4,8 @@ import { AppDispatch, RootState } from '../store/store';
 import { BooksState, deleteBook } from "../slices/booksSlice";
 import ConfirmDeleteModal from './ConfirmDeleteModal';
 import EditBookModal from './EditBookModal';
+import SearchBar from './SearchBar';
+import LoadingIndicator from './LoadingIndicator';
 
 function BookList() {
   const dispatch = useDispatch<AppDispatch>();
@@ -12,7 +14,7 @@ function BookList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [bookToDelete, setBookToDelete] = useState<string | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedBook, setSelectedBook] = useState<{
     id: string;
     title: string;
@@ -50,33 +52,53 @@ function BookList() {
     setBookToDelete(null);
   };
 
-  if (status) return <p>Loading...</p>;
+  const filteredBooks = books.filter((book) =>
+    book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    book.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    book.genre.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  if (status) {
+    return (
+
+      <div className='flex items-center justify-center'><LoadingIndicator /></div>
+    )
+
+  };
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {books.map((book) => (
-        <div key={book._id} className="bg-white shadow-md rounded-lg p-4">
-          <h2 className="text-xl font-bold mb-2">{book.title}</h2>
-          <p className="text-gray-700 mb-2">Author: {book.author}</p>
-          <p className="text-gray-700 mb-4">Genre: {book.genre}</p>
-          <div className="flex justify-between">
-            <button className="bg-blue-500 text-white py-1 px-4 rounded hover:bg-blue-600">
-              View
-            </button>
-            <button className="bg-yellow-500 text-white py-1 px-4 rounded hover:bg-yellow-600" onClick={() => handleEditClick(book as any)}>
-              Edit
-            </button>
-            <button
-              onClick={() => handleDeleteClick(book._id as any)}
-              className="bg-red-500 text-white py-1 px-4 rounded hover:bg-red-600"
-            >
-              Delete
-            </button>
+    <section className="container mx-auto p-4">
 
+      <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {filteredBooks.map((book) => (
+          <div key={book._id} className="bg-white shadow-md rounded-lg p-4">
+            <h2 className="text-xl font-bold mb-2">{book.title}</h2>
+            <p className="text-gray-700 mb-2">Author: {book.author}</p>
+            <p className="text-gray-700 mb-4">Genre: {book.genre}</p>
+            <div className="flex justify-between">
+              <button className="bg-blue-500 text-white py-1 px-4 rounded hover:bg-blue-600">
+                View
+              </button>
+              <button
+                className="bg-yellow-500 text-white py-1 px-4 rounded hover:bg-yellow-600"
+                onClick={() => handleEditClick(book as any)}
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDeleteClick(book._id as any)}
+                className="bg-red-500 text-white py-1 px-4 rounded hover:bg-red-600"
+              >
+                Delete
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+
       {selectedBook && (
         <EditBookModal
           isOpen={isEditModalOpen}
@@ -89,8 +111,8 @@ function BookList() {
         onClose={handleCloseModal}
         onConfirm={handleConfirmDelete}
       />
-    </div>
+    </section>
   );
-};
+}
 
 export default BookList;
